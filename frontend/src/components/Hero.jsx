@@ -24,7 +24,7 @@ export default function Hero({ onNavigate }) {
               </button>
             </div>
             <div className="hero-meta">
-              <span><b>12,400+</b> emails sent</span>
+              {/* <span><b>12,400+</b> emails sent</span> */}
               <span style={{ width: 1, height: 14, background: 'var(--line-2)' }} />
               <span><b>3.2×</b> avg. reply rate</span>
               <span style={{ width: 1, height: 14, background: 'var(--line-2)' }} />
