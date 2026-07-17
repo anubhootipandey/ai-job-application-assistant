@@ -1,118 +1,78 @@
-import { useState } from 'react'
-import './App.css'
-import { instance, endpoints } from './api.jsx';
-import emailjs from '@emailjs/browser';
+import { useState, useEffect } from 'react';
+import './index.css';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Hero from './components/Hero';
+import Features from './components/Features';
+import About from './components/About';
+import Docs from './components/Docs';
+import CTA from './components/CTA';
+import EmailGenerator from './components/EmailGenerator';
+import Auth from './components/Auth';
 
-function App() {
-  const [resumeText, setResumeText] = useState("");
-  const [jobPosition,setJobPosition] = useState("");
-  const [to, setTo] = useState("");
-  const [email, setEmail] = useState({subject: "", body: ""});
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData()
-    formData.append('file', file);
-    await instance.post(endpoints.UPLOAD_RESUME, formData)
-            .then(res => setResumeText(res.data.resume_text))
-            .catch(err => console.log(err))
-  }
+export default function App() {
+  const [page, setPage] = useState('home');
 
-  const generateEmail = async () => {
-    await instance.post(endpoints.GENERATE_EMAIL,{"resume_text":resumeText, job_position:jobPosition})
-            .then(res=>setEmail(res.data))
-            .catch(err => console.log(err))
-  }
+  const navigate = (p) => {
+    setPage(p);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-  const sendEmail = () => {
-    const templateParameters={
-      "subject":email.subject,
-      "message":email.body,
-      "email":to
-    }
-    emailjs.send("service_8jb4qnt", "template_nvy04o2", templateParameters,"2lKlXhf97CcEfwpjq")
-          .then(res=>alert("Email has been sent"))
-          .catch(err => console.log(err))
-  }
+  useEffect(() => {
+    document.title = 'Mailflow — AI Cold Email Generator for Job Seekers';
+  }, []);
+
+  const isAuthPage = page === 'signin' || page === 'signup';
 
   return (
-  <div className="app">
-  <div className="container">
+    <div>
+      <Navbar page={page} onNavigate={navigate} />
 
-    <div className="hero">
-      <h1>AI Job Application Assistant</h1>
-      <p>
-        Generate personalized cold emails for recruiters using AI and your resume.
-      </p>
-    </div>
-
-    <div className="dashboard">
-
-      <div className="card">
-        <h2>Create Email</h2>
-
-        <div className="input-group">
-          <label>Upload Resume</label>
-          <input
-            type="file"
-            onChange={(e) => handleFileUpload(e)}
-          />
-        </div>
-
-        <div className="input-group">
-          <label>Job Position</label>
-          <input
-            type="text"
-            placeholder="Frontend Developer"
-            onChange={(e) => setJobPosition(e.target.value)}
-          />
-        </div>
-
-        <div className="input-group">
-          <label>HR Email</label>
-          <input
-            type="text"
-            placeholder="hr@company.com"
-            onChange={(e) => setTo(e.target.value)}
-          />
-        </div>
-
-        <button
-          className="generate-btn"
-          disabled={!resumeText}
-          onClick={generateEmail}
-        >
-          Generate AI Email
-        </button>
-      </div>
-
-      {email && (
-        <div className="email-card">
-          <h2>Generated Email</h2>
-
-          <textarea
-            value={email?.body}
-            onChange={(e) =>
-              setEmail({
-                ...email,
-                body: e.target.value,
-              })
-            }
-          />
-
-          <button
-            className="send-btn"
-            onClick={sendEmail}
-          >
-            Send Email
-          </button>
-        </div>
+      {isAuthPage ? (
+        <Auth mode={page} onNavigate={navigate} />
+      ) : (
+        <>
+          {page === 'home' && (
+            <>
+              <Hero onNavigate={navigate} />
+              <Features onNavigate={navigate} />
+              <EmailGenerator />
+              <About onNavigate={navigate} />
+              <Docs onNavigate={navigate} />
+              <CTA onNavigate={navigate} />
+            </>
+          )}
+          {page === 'how' && (
+            <>
+              <div style={{ height: 24 }} />
+              <Features onNavigate={navigate} />
+              <CTA onNavigate={navigate} />
+            </>
+          )}
+          {page === 'about' && (
+            <>
+              <div style={{ height: 24 }} />
+              <About onNavigate={navigate} />
+              <CTA onNavigate={navigate} />
+            </>
+          )}
+          {page === 'docs' && (
+            <>
+              <div style={{ height: 24 }} />
+              <Docs onNavigate={navigate} />
+            </>
+          )}
+          {page === 'generator' && (
+            <>
+              <div style={{ height: 24 }} />
+              <EmailGenerator />
+              <Features onNavigate={navigate} />
+            </>
+          )}
+          <Footer onNavigate={navigate} />
+        </>
       )}
-
     </div>
-  </div>
-</div>
-)
+  );
 }
-
-export default App
