@@ -81,6 +81,7 @@ uvicorn main:app --reload
 
 ## Live Link
 Backend - https://ai-job-application-assistant-hn1n.onrender.com/docs
+
 Frontend - https://ai-job-application-assistant-seven.vercel.app/
 
 ---
